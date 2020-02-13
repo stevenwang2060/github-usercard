@@ -1,3 +1,5 @@
+
+
 /* Step 1: using axios, send a GET request to the following URL 
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
@@ -24,8 +26,6 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
-
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -45,6 +45,74 @@ const followersArray = [];
 </div>
 
 */
+
+function gitCardMaker(content) {
+
+  const card = document.createElement('div');
+  card.classList.add('card');
+  const profImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  cardInfo.classList.add('card-info');
+  const titleUser = document.createElement('h3');
+  titleUser.classList.add('name');
+  const userName = document.createElement('p');
+  userName.classList.add('username');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const linkAddress = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  profImg.src = content.avatar_url;
+  titleUser.textContent = content.name;
+  userName.textContent = content.login;
+  location.textContent = `Location: ${content.location}`;
+  profile.textContent = `Profile: `
+  linkAddress.setAttribute('href', content.html_url);
+  linkAddress.setAttribute('target', '_blank');
+  linkAddress.textContent = content.html_url;
+  followers.textContent = `Followers: ${content.followers}`;
+  following.textContent = `Following: ${content.following}`;
+  bio.textContent = `Bio: ${content.bio}`;
+
+  card.appendChild(profImg);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(titleUser);
+  cardInfo.appendChild(userName);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  profile.appendChild(linkAddress);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  const cardEnterPoint = document.querySelector('.cards');
+  cardEnterPoint.appendChild(card);
+
+  return card;
+};
+
+axios.get("https://api.github.com/users/stevenwang2060")
+  .then(response => {
+    gitCardMaker(response.data);
+
+    axios.get("https://api.github.com/users/stevenwang2060/followers")
+      .then(response => {
+        response.data.forEach(item => {
+          axios.get(item.url)
+            .then(response => {
+              gitCardMaker(response.data);
+            })
+        })
+      })
+      .catch(error => {
+        console.log("The data was not returned", error);
+      })
+  })
+  .catch(error => {
+    console.log("The data was not returned", error);
+  });
 
 /* List of LS Instructors Github username's: 
   tetondan
